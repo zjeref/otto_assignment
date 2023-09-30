@@ -19,3 +19,27 @@ code {
 .input-form {
   @apply focus:outline-none py-2 text-sm
 }
+
+/* Signup.css */
+.slide-enter {
+  transform: translateX(100%);
+  opacity: 0;
+  /* transition: transform 200ms ease-in; */
+}
+
+.slide-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 500ms, opacity 500ms;
+}
+
+.slide-exit {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-exit-active {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 500ms, opacity 500ms;
+}
