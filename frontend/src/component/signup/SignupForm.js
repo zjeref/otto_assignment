@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import FormField from "../FormField";
+import FormField from "../common/FormField";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   emailValidation,
   nameValidation,
   passwordValidation,
-  confirmPasswordValidation,
 } from "../../helpers/validations"; //validationFunc should retuirn true or false only
 import { CSSTransition } from "react-transition-group";
 import { BsArrowLeft } from "react-icons/bs";
@@ -13,25 +14,34 @@ const SignupForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [nameValidated, setNameValidated] = useState(false);
   const [emailValidated, setEmailValidated] = useState(false);
   const [passwordValidated, setPasswordValidated] = useState(false);
-  const [confirmPasswordValidated, setConfirmPasswordValidated] =
-    useState(false);
 
   const [currentField, setCurrentField] = useState(0);
 
-  const handleForm = (e) => {
+  const navigate = useNavigate();
+
+  const handleForm = async (e) => {
     e.preventDefault();
     if (currentField === 0 && nameValidated) {
       setCurrentField(1);
     } else if (currentField === 1 && emailValidated) {
       setCurrentField(2);
     } else if (currentField === 2 && passwordValidated) {
-      setCurrentField(3);
-    } else if (currentField === 3 && confirmPasswordValidated) {
+      await axios
+        .post(`${process.env.REACT_APP_API_URL}/user/create`, {
+          name,
+          email,
+          password,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            navigate("/login");
+          }
+        })
+        .catch((err) => console.error(err));
     }
   };
 
@@ -55,8 +65,13 @@ const SignupForm = () => {
         <div>
           <h1 className="text-3xl font-bold text-greyy p-4">Sign up</h1>
           <p className="text-greyy font-bold p-4">
-            New user?{" "}
-            <span className="text-bluee font-medium">Create an account</span>
+            Already have an account?{" "}
+            <span
+              className="text-bluee font-medium cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
+              Login Now
+            </span>
           </p>
         </div>
         <form className="p-4">
@@ -119,25 +134,6 @@ const SignupForm = () => {
                   />
                 </div>
               </CSSTransition>
-              <CSSTransition
-                in={currentField === 3}
-                timeout={300}
-                classNames="slide"
-                unmountOnExit
-              >
-                <div className="flex-shrink-0 w-full">
-                  <FormField
-                    name="confirm password"
-                    type="password"
-                    value={confirmPassword}
-                    placeholder="Enter password"
-                    validationText="Password should be at least 6 characters"
-                    validationFunc={confirmPasswordValidation}
-                    getValidation={setConfirmPasswordValidated}
-                    getData={setConfirmPassword}
-                  />
-                </div>
-              </CSSTransition>
             </div>
           </div>
           <div className="text-end my-4">
@@ -145,7 +141,7 @@ const SignupForm = () => {
               className="font-medium px-4 py-1 bg-bluee text-whitee rounded-full"
               onClick={(e) => handleForm(e)}
             >
-              {currentField === 3 ? "Submit" : "Continue"}
+              {currentField === 2 ? "Submit" : "Continue"}
             </button>
           </div>
         </form>

@@ -9,6 +9,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply bg-blackk
 }
 
 code {
@@ -42,4 +43,8 @@ code {
   transform: translateX(100%);
   opacity: 0;
   transition: transform 500ms, opacity 500ms;
+}
+
+tr {
+  @apply flex justify-between cursor-pointer
 }

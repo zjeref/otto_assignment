@@ -1,23 +1,46 @@
 import React, { useState } from "react";
-import FormField from "../FormField";
+import FormField from "../common/FormField";
 import { emailValidation, passwordValidation } from "../../helpers/validations"; //validationFunc should retuirn true or false only
 import { CSSTransition } from "react-transition-group";
 import { BsArrowLeft } from "react-icons/bs";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useAtom } from "jotai";
+import { user } from "../../helpers/global-state";
 
 const LoginForm = () => {
+  const [currentUser, setCurrentUser] = useAtom(user);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [emailValidated, setEmailValidated] = useState(false);
   const [passwordValidated, setPasswordValidated] = useState(false);
 
+  const navigate = useNavigate();
+
   const [currentField, setCurrentField] = useState(0);
 
-  const handleForm = (e) => {
+  const handleForm = async (e) => {
     e.preventDefault();
     if (currentField === 0 && emailValidated) {
       setCurrentField(1);
     } else if (currentField === 1 && passwordValidated) {
+      await axios
+        .post(`${process.env.REACT_APP_API_URL}/user/verify`, {
+          email,
+          password,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            Cookies.set("authToken", res.data.token);
+            setCurrentUser(res.data);
+            navigate("/");
+          }
+        })
+        .catch((err) => console.error(err));
     }
   };
 
@@ -42,7 +65,12 @@ const LoginForm = () => {
           <h1 className="text-3xl font-bold text-greyy p-4">Log In</h1>
           <p className="text-greyy font-bold p-4">
             New user?{" "}
-            <span className="text-bluee font-medium">Create an account</span>
+            <span
+              className="text-bluee font-medium cursor-pointer"
+              onClick={() => navigate("/signup")}
+            >
+              Create an account
+            </span>
           </p>
         </div>
         <form className="p-4">
@@ -79,7 +107,7 @@ const LoginForm = () => {
                     type="password"
                     value={password}
                     placeholder="Enter password"
-                    validationText="Password should be at least 6 characters"
+                    validationText=""
                     validationFunc={passwordValidation}
                     getValidation={setPasswordValidated}
                     getData={setPassword}

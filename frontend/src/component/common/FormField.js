@@ -14,11 +14,10 @@ const FormField = ({
   const [isValidated, setIsValidated] = useState(true);
   const id = useId();
 
-
   useEffect(() => {
-    if(data) {
-      getData(data);
-      setIsValidated(validationFunc(data))
+    getData(data);
+    if (data) {
+      setIsValidated(validationFunc(data));
       getValidation(isValidated);
     }
   }, [data]);
