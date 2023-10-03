@@ -18,6 +18,8 @@ const LoginForm = () => {
   const [emailValidated, setEmailValidated] = useState(false);
   const [passwordValidated, setPasswordValidated] = useState(false);
 
+  const [passwordErrorText, setPasswordErrorText] = useState("");
+
   const navigate = useNavigate();
 
   const [currentField, setCurrentField] = useState(0);
@@ -38,6 +40,8 @@ const LoginForm = () => {
             Cookies.set("authToken", res.data.token);
             setCurrentUser(res.data);
             navigate("/");
+          } else {
+            setPasswordErrorText("Invalid Credentials");
           }
         })
         .catch((err) => console.error(err));
@@ -107,7 +111,7 @@ const LoginForm = () => {
                     type="password"
                     value={password}
                     placeholder="Enter password"
-                    validationText=""
+                    validationText={passwordErrorText}
                     validationFunc={passwordValidation}
                     getValidation={setPasswordValidated}
                     getData={setPassword}

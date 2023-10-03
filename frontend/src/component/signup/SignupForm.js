@@ -30,6 +30,7 @@ const SignupForm = () => {
     } else if (currentField === 1 && emailValidated) {
       setCurrentField(2);
     } else if (currentField === 2 && passwordValidated) {
+      console.log("gest")
       await axios
         .post(`${process.env.REACT_APP_API_URL}/user/create`, {
           name,
@@ -37,6 +38,7 @@ const SignupForm = () => {
           password,
         })
         .then((res) => {
+          console.log(res)
           if (res.status === 200) {
             navigate("/login");
           }
